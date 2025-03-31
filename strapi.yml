@@ -1,0 +1,41 @@
+version: "3"
+services:
+  strapi:
+    image: elestio/strapi-production:latest
+    environment:
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_HOST: db
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - /mnt/data/strapi:/strapi
+      - ./config:/opt/app/config
+      - ./src:/opt/app/src
+      - ./.env:/opt/app/.env
+      - ./public/uploads:/opt/app/public/uploads
+      - ./entrypoint.sh:/opt/app/entrypoint.sh
+    networks:
+      - app-internal
+      - traefik-public
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=strapi"
+        - "traefik.port=1337"
+        # change the host here
+        - "traefik.http.routers.strapi.rule=Host(`strapi.coastalsites.dev`)"
+        - "traefik.http.services.strapi.loadbalancer.server.port=1337"
+        - "traefik.http.routers.strapi.entrypoint=websecure"
+        - "traefik.http.routers.strapi.tls=true"
+        - "traefik.http.routers.strapi.tls.certresolver=leresolver"
+
+networks:
+  traefik-public:
+    external: true
+  app-internal:
+    external: true

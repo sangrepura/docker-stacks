@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  agent:
+    image: portainer/agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - portainer-agent-internal
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  portainer:
+    image: portainer/portainer-ee
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    volumes:
+      #- /var/run/docker.sock:/var/run/docker.sock
+      # make sure the folder is available
+      - /mnt/data/portainer:/data
+    networks:
+      - traefik-public
+      - portainer-agent-internal
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # Change the host here"
+        - "traefik.http.routers.portainer.rule=Host(`portainer.coastalsites.dev`)"
+        - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+        - "traefik.http.routers.portainer.entrypoints=websecure"
+        - "traefik.http.routers.portainer.tls=true"
+        - "traefik.http.routers.portainer.tls.certresolver=leresolver"
+
+        # Auth Not Working with Portainer
+        #- "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$ZaVPNLwkafIJnxKRLScQcOpgyxyaD14Xn95j/rPS.Hs/AUru3WalO"
+        #- "traefik.http.middlewares.auth.basicauth.headerField=X-WebAuth-User"
+        #- "traefik.http.middlewares.auth.basicauth.removeheader=true"
+        #- "traefik.http.routers.portainer-auth-login.rule=Host(`${DOMAIN}`) && Path(`/api/auth`)"
+        #- "traefik.http.routers.portainer-auth-login.priority=25"
+        #- "traefik.http.routers.portainer-auth-login.middlewares=auth"
+        #- "traefik.http.routers.portainer-auth.rule=Host(`${DOMAIN}`)"
+        #- "traefik.http.routers.portainer-auth.priority=10"
+
+      mode: replicated
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  traefik-public:
+    external: true
+  portainer-agent-internal:
+    driver: overlay
+    attachable: true

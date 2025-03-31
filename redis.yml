@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  redis-master:
+    image: "bitnami/redis:7.2"
+    networks:
+      - redis-internal
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_AOF_ENABLED=no
+      - REDID_RDB_POLICY=3600 1 300 100 60 10000
+      - REDIS_PASSWORD=LdbdKbitQx_D4gLM
+    volumes:
+      - "/mnt/data/redis/master:/bitnami"
+    command: /opt/bitnami/scripts/redis/run.sh --maxmemory 500mb --maxmemory-policy allkeys-lru
+  redis-slave-1:
+    image: "bitnami/redis:7.2"
+    networks:
+      - redis-internal
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_AOF_ENABLED=no
+      - REDIS_PASSWORD=LdbdKbitQx_D4gLM
+      - REDIS_MASTER_PASSWORD=LdbdKbitQx_D4gLM
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+    volumes:
+      - "/mnt/data/redis/slave-1:/bitnami"
+    command: /opt/bitnami/scripts/redis/run.sh --maxmemory 500mb --maxmemory-policy allkeys-lru
+  insight:
+    image: redislabs/redisinsight:latest
+    depends_on:
+      - redis-master
+      - redis-slave-1
+    networks:
+      - traefik-public
+      - redis-internal
+    volumes:
+      - /mnt/redis-insight:/db
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=insight"
+        - "traefik.port=5540"
+        - "traefik.default.protocol=http"
+        # change the host here
+        - "traefik.http.routers.insight.rule=Host(`insight.coastalsites.dev`)"
+        - "traefik.http.services.insight.loadbalancer.server.port=5540"
+        - "traefik.http.routers.insight.entrypoints=websecure"
+        - "traefik.http.routers.insight.tls=true"
+        - "traefik.http.routers.insight.tls.certresolver=leresolver"
+        # Change the auth password here
+        - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$ZaVPNLwkafIJnxKRLScQcOpgyxyaD14Xn95j/rPS.Hs/AUru3WalO"
+        - "traefik.http.routers.insight.middlewares=auth"
+
+networks:
+  traefik-public:
+    external: true
+  redis-internal:
+    external: true

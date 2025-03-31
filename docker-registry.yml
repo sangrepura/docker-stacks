@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  registry:
+    image: registry:2
+    networks:
+      - traefik-public
+    environment:
+      VIRTUAL_HOST: registry.coastalsites.dev
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.password
+    volumes:
+      - /mnt/docker-registry/auth:/auth
+      - /mnt/docker-registry/registry:/var/lib/registry
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.registry.rule=Host(`registry.coastalsites.dev`)"
+        - "traefik.http.services.registry.loadbalancer.server.port=5000"
+        - "traefik.http.routers.registry.entrypoints=websecure"
+        - "traefik.http.routers.registry.tls=true"
+        - "traefik.http.routers.registry.tls.certresolver=leresolver"
+
+networks:
+  traefik-public:
+    external: true

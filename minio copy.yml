@@ -1,0 +1,163 @@
+version: "3.8"
+
+services:
+  minio1:
+    image: minio/minio:latest
+    command: server --console-address "0.0.0.0:9001" https://minio{1...4}/data
+    networks:
+      - traefik-public
+    environment:
+      MINIO_ROOT_USER: minio-root-user
+      MINIO_ROOT_PASSWORD: minio-root-password
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - minio-root-user
+      - minio-root-password
+    volumes:
+      - /mnt/data/minio/minio-1:/data
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # MINIO console
+        - "traefik.http.routers.minio.tls=true"
+        - "traefik.http.routers.minio.rule=Host(`minio.coastalsites.dev`)"
+        - "traefik.http.routers.minio.entrypoints=websecure"
+        - "traefik.http.routers.minio.tls.certresolver=leresolver"
+        - "traefik.http.services.minio.loadbalancer.server.port=9001"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.secure=true"
+        # MINIO api
+        - "traefik.http.routers.cdn.tls=true"
+        - "traefik.http.routers.cdn.rule=Host(`s3.coastalsites.dev`)"
+        - "traefik.http.routers.cdn.entrypoints=websecure"
+        - "traefik.http.routers.cdn.tls.certresolver=leresolver"
+        - "traefik.http.services.cdn.loadbalancer.server.port=9000"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.secure=true"
+  minio2:
+    image: minio/minio:latest
+    command: server --console-address "0.0.0.0:9001" https://minio{1...4}/data
+    networks:
+      - traefik-public
+    environment:
+      MINIO_ROOT_USER: minio-root-user
+      MINIO_ROOT_PASSWORD: minio-root-password
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - minio-root-user
+      - minio-root-password
+    volumes:
+      - /mnt/data/minio/minio-2:/data
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # MINIO console
+        - "traefik.http.routers.minio.tls=true"
+        - "traefik.http.routers.minio.rule=Host(`minio.coastalsites.dev`)"
+        - "traefik.http.routers.minio.entrypoints=websecure"
+        - "traefik.http.routers.minio.tls.certresolver=leresolver"
+        - "traefik.http.services.minio.loadbalancer.server.port=9001"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.secure=true"
+        # MINIO api
+        - "traefik.http.routers.cdn.tls=true"
+        - "traefik.http.routers.cdn.rule=Host(`s3.coastalsites.dev`)"
+        - "traefik.http.routers.cdn.entrypoints=websecure"
+        - "traefik.http.routers.cdn.tls.certresolver=leresolver"
+        - "traefik.http.services.cdn.loadbalancer.server.port=9000"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.secure=true"
+
+  minio3:
+    image: minio/minio:latest
+    command: server --console-address "0.0.0.0:9001" https://minio{1...4}/data
+    networks:
+      - traefik-public
+    environment:
+      MINIO_ROOT_USER: minio-root-user
+      MINIO_ROOT_PASSWORD: minio-root-password
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - minio-root-user
+      - minio-root-password
+    volumes:
+      - /mnt/data/minio/minio-3:/data
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # MINIO console
+        - "traefik.http.routers.minio.tls=true"
+        - "traefik.http.routers.minio.rule=Host(`minio.coastalsites.dev`)"
+        - "traefik.http.routers.minio.entrypoints=websecure"
+        - "traefik.http.routers.minio.tls.certresolver=leresolver"
+        - "traefik.http.services.minio.loadbalancer.server.port=9001"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.secure=true"
+        # MINIO api
+        - "traefik.http.routers.cdn.tls=true"
+        - "traefik.http.routers.cdn.rule=Host(`s3.coastalsites.dev`)"
+        - "traefik.http.routers.cdn.entrypoints=websecure"
+        - "traefik.http.routers.cdn.tls.certresolver=leresolver"
+        - "traefik.http.services.cdn.loadbalancer.server.port=9000"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.secure=true"
+
+  minio4:
+    image: minio/minio:latest
+    command: server --console-address "0.0.0.0:9001" https://minio{1...4}/data
+    networks:
+      - traefik-public
+    environment:
+      MINIO_ROOT_USER: minio-root-user
+      MINIO_ROOT_PASSWORD: minio-root-password
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - minio-root-user
+      - minio-root-password
+    volumes:
+      - /mnt/data/minio/minio-4:/data
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # MINIO console
+        - "traefik.http.routers.minio.tls=true"
+        - "traefik.http.routers.minio.rule=Host(`minio.coastalsites.dev`)"
+        - "traefik.http.routers.minio.entrypoints=websecure"
+        - "traefik.http.routers.minio.tls.certresolver=leresolver"
+        - "traefik.http.services.minio.loadbalancer.server.port=9001"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.minio.loadbalancer.sticky.cookie.secure=true"
+        # MINIO api
+        - "traefik.http.routers.cdn.tls=true"
+        - "traefik.http.routers.cdn.rule=Host(`s3.coastalsites.dev`)"
+        - "traefik.http.routers.cdn.entrypoints=websecure"
+        - "traefik.http.routers.cdn.tls.certresolver=leresolver"
+        - "traefik.http.services.cdn.loadbalancer.server.port=9000"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.name=stickycookie"
+        - "traefik.http.services.cdn.loadbalancer.sticky.cookie.secure=true"
+
+networks:
+  traefik-public:
+    external: true
+
+secrets:
+  minio-root-user:
+    external: true
+  minio-root-password:
+    external: true

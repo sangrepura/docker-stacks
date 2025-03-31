@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  whoami:
+    image: ubuntu
+    tty: true
+    networks:
+      - traefik-public
+      - app-internal
+    command: /bin/bash
+networks:
+  traefik-public:
+    external: true
+  app-internal:
+    external: true

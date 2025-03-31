@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgis/postgis
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: PogJW_a9xXA73__T
+    volumes:
+      - /mnt/data/postgres:/var/lib/postgresql/data
+    command: -c ssl=on -c ssl_cert_file=/var/lib/postgresql/data/ssl/certificate.pem -c ssl_key_file=/var/lib/postgresql/data/ssl/privatekey.pem
+    networks:
+      - app-internal
+      - traefik-public
+    ports:
+      - "5433:5432"
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=postgres"
+        - "traefik.port=5433"
+        # change the host here
+        - "traefik.http.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
+        - "traefik.http.services.postgres.loadbalancer.server.port=5433"
+        - "traefik.http.routers.postgres.entrypoint=tcp"
+        - "traefik.http.routers.postgres.rule=HostSNI(`*`)"
+        - "traefik.http.routers.postgres.tls.certresolver=leresolver"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: support@coastalsites.dev
+      PGADMIN_DEFAULT_PASSWORD: 9zJTR4fWid-xiJmh
+      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
+      # Number of values to trust for X-Forwarded-For
+      PROXY_X_FOR_COUNT: 2
+      # Number of values to trust for X-Forwarded-Proto.
+      PROXY_X_PROTO_COUNT: 2
+      # Number of values to trust for X-Forwarded-Host.
+      PROXY_X_HOST_COUNT: 2
+      # Number of values to trust for X-Forwarded-Port.
+      PROXY_X_PORT_COUNT: 2
+      # Number of values to trust for X-Forwarded-Prefix.
+      PROXY_X_PREFIX_COUNT: 2
+    volumes:
+      - /mnt/pgadmin:/var/lib/pgadmin
+    networks:
+      - traefik-public
+      - app-internal
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=pgadmin"
+        - "traefik.port=80"
+        - "traefik.default.protocol=http"
+        # change the host here
+        - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.coastalsites.dev`)"
+        - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+        - "traefik.http.routers.pgadmin.entrypoints=websecure"
+        - "traefik.http.routers.pgadmin.tls=true"
+        - "traefik.http.routers.pgadmin.tls.certresolver=leresolver"
+        # Change the auth password here
+        - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$ZaVPNLwkafIJnxKRLScQcOpgyxyaD14Xn95j/rPS.Hs/AUru3WalO"
+        - "traefik.http.routers.pgadmin.middlewares=auth"
+
+networks:
+  traefik-public:
+    external: true
+  app-internal:
+    external: true

@@ -1,0 +1,39 @@
+version: "3"
+services:
+  seq-input-gelf:
+    image: datalust/seq-input-gelf:latest
+    depends_on:
+      - seq
+    networks:
+      - app-internal
+    ports:
+      - "12201:12201/udp"
+    environment:
+      SEQ_ADDRESS: "http://seq:5431"
+  seq:
+    image: datalust/seq:latest
+    networks:
+      - traefik-public
+      - app-internal
+    environment:
+      ACCEPT_EULA: Y
+      SEQ_FIRSTRUN_ADMINUSERNAME: "admin"
+      SEQ_FIRSTRUN_ADMINPASSWORD: "as4tbxVH5vm7ERbe" # change this
+    restart: unless-stopped
+    volumes:
+      - /mnt/seq/data:/data
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # change the host here
+        - "traefik.http.routers.seq.rule=Host(`seq.coastalsites.dev`)"
+        - "traefik.http.services.seq.loadbalancer.server.port=80"
+        - "traefik.http.routers.seq.entrypoints=websecure"
+        - "traefik.http.routers.seq.tls=true"
+        - "traefik.http.routers.seq.tls.certresolver=leresolver"
+
+networks:
+  traefik-public:
+    external: true
+  app-internal:
+    external: true

@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  directus:
+    image: directus/directus:latest
+    volumes:
+      - /mnt/directus/extensions:/directus/extensions
+    networks:
+      - traefik-public
+      - app-internal
+      - redis-internal
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+      # General
+      PUBLIC_URL: "https://cms.coastalsites.dev"
+      MAX_PAYLOAD_SIZE: "10mb"
+      # Database
+      DB_CLIENT: "pg"
+      DB_PORT: "5432"
+      DB_HOST: "postgres"
+      DB_DATABASE: "directus"
+      DB_USER: "postgres"
+      DB_PASSWORD: "PogJW_a9xXA73__T"
+      # Redis
+      REDIS_ENABLED: "true"
+      REDIS_HOST: "redis-master"
+      REDIS_PORT: "6379"
+      REDIS_USERNAME: ""
+      REDIS_PASSWORD: "LdbdKbitQx_D4gLM"
+      # Security
+      KEY: "hu4boMD5xXK44nct4ABP4WzbTKKGdQ0PFfUc0p9w9Qk="
+      SECRET: "uv2kqk/CGWS+4QfHNKUJnuuJtmSSGVzczppRk2jCQbQ="
+      # CORS
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "*"
+      # Cache
+      CACHE_ENABLED: "true"
+      CACHE_STORE: "redis"
+      CACHE_AUTO_PURGE: "true"
+      CACHE_REDIS_TLS__CA: "base64cert"
+      CACHE_REDIS_TLS__REJECT_UNAUTHORIZED: "false"
+      # File Storage
+      STORAGE_LOCATIONS: "supabase"
+      STORAGE_SUPABASE_DRIVER: "supabase"
+      STORAGE_SUPABASE_SERVICE_ROLE: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkY2ZncGVrcndtZ2RvZXJlZXV6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjYyODQwNSwiZXhwIjoyMDI4MjA0NDA1fQ.bEWgAVhpQlKSmFktWaGC09zUFIlJJjNNoP6WnG7G8IA"
+      STORAGE_SUPABASE_PROJECT_ID: "wdcfgpekrwmgdoereeuz"
+      STORAGE_SUPABASE_BUCKET: "directus-coastal-sites"
+      # Synchronization
+      SYNCHRONIZATION_STORE: "redis"
+      # Email
+      EMAIL_FROM: "no-reply@coastalsites.dev"
+      EMAIL_TRANSPORT: "smtp"
+      # SMTP (smtp)
+      EMAIL_SMTP_HOST: "smtp.resend.com"
+      EMAIL_SMTP_PORT: "587"
+      EMAIL_SMTP_SECURE: "false"
+      EMAIL_SMTP_USER: "resend"
+      EMAIL_SMTP_IGNORE_TLS: "true"
+      EMAIL_SMTP_NAME: directus
+      EMAIL_SMTP_PASSWORD: "re_AFXkzUgC_CuzyuLUsdd71YmQPbRp2tCEY"
+      # Admin Account
+      ADMIN_EMAIL: "scott@coastalsites.dev"
+      ADMIN_PASSWORD: "d2iQdA3HfqU4"
+      # WebSockets
+      WEBSOCKETS_ENABLED: "true"
+
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.cms.tls=true"
+        - "traefik.http.routers.cms.service=cms"
+        - "traefik.http.routers.cms.rule=Host(`cms.coastalsites.dev`)"
+        - "traefik.http.routers.cms.entrypoints=websecure"
+        - "traefik.http.routers.cms.tls.certresolver=leresolver"
+        - "traefik.http.services.cms.loadbalancer.server.port=8055"
+        # Change the auth password here
+        #- "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$ZaVPNLwkafIJnxKRLScQcOpgyxyaD14Xn95j/rPS.Hs/AUru3WalO"
+        #- "traefik.http.routers.cms.middlewares=auth"
+
+networks:
+  traefik-public:
+    external: true
+  redis-internal:
+    external: true
+  app-internal:
+    external: true

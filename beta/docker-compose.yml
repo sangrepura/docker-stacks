@@ -1,0 +1,38 @@
+version: '3'
+services:
+  strapi:
+    image: registry.coastalsites.dev/strapi:5.0.0-beta.4
+    environment:
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_HOST: $DATABASE_HOST}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PORT: ${DATABASE_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - /mnt/data/strapi:/opt
+    networks:
+      - app-internal
+      - traefik-public
+    deploy:
+      labels:
+        - "traefik.enable=true"
+
+        # change the host here
+        - "traefik.http.routers.strapi.rule=Host(`strapi.coastalsites.dev`)"
+        - "traefik.http.services.strapi.loadbalancer.server.port=1337"
+        - "traefik.http.routers.strapi.entrypoint=websecure"
+        - "traefik.http.routers.strapi.tls=true"
+        - "traefik.http.routers.strapi.tls.certresolver=leresolver"
+        
+networks:
+  traefik-public:
+    external: true
+  app-internal:
+    external: true

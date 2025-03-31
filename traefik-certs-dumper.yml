@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  traefik-certs-dumper:
+    image: ldez/traefik-certs-dumper
+    entrypoint: sh -c '
+      apk add jq
+      ; while ! [ -e /data/acme.json ]
+      || ! [ `jq ".[] | .Certificates | length" /data/acme.json` != 0 ]; do
+      sleep 1
+      ; done
+      && traefik-certs-dumper file --version v2 --crt-ext=.pem --key-ext=.pem --domain-subdir=true --watch
+      --source /data/acme.json --dest /data/certs'
+    volumes:
+      - /mnt/data/traefik:/data
