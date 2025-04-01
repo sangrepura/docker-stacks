@@ -39,19 +39,16 @@ services:
       PROXY_X_PREFIX_COUNT: 2
     volumes:
       - /mnt/pgadmin:/var/lib/pgadmin
-    networks:
+    networks: 
      - traefik-public
+     - app-internal
     deploy:
       labels:
-        # change the host here
         - "traefik.enable=true"
-        - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.coastalsites.dev`)"
-        - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
-        - "traefik.http.routers.pgadmin.entrypoints=websecure"
-        - "traefik.http.routers.pgadmin.tls=true"
-        - "traefik.http.routers.pgadmin.tls.certresolver=leresolver"
-        # Change the auth password here
-
+        - "traefik.tcp.routers.postgres.rule=HostSNI(`postgres.coastalsites.dev`)"  # Add HostSNI rule
+        - "traefik.tcp.routers.postgres.entrypoints=postgres"
+        - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
+        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"  # Correct port to 5432
 networks:
   traefik-public:
     external: true
