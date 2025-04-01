@@ -28,7 +28,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       # Make sure the volume folder is created
-      - "/mnt/data/traefik/acme.json:/le/acme.json"
+      - "/mnt/data/traefik:/le"
     deploy:
       labels:
         # Dashboard
