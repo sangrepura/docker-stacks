@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   traefik:
-    image: "traefik:latest"
+    image: "traefik:3.0"
     command:
       - --log.level=INFO
       - --entrypoints.web.address=:80
@@ -22,7 +22,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - traefik-public
     volumes:
