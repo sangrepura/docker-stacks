@@ -24,7 +24,6 @@ services:
         - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
         - "traefik.tcp.routers.postgres.entrypoint=postgres"
         - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
-        - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
         - "traefik.tcp.routers.postgres.tls=true"
         - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
         - "traefik.tcp.routers.postgres.tls.domains[0].main=postgres.coastalsites.dev"
