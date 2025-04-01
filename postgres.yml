@@ -13,7 +13,7 @@ services:
       - app-internal
       - traefik-public
     ports:
-      - "5433:5432"
+      - "5432:5432"
     deploy:
       labels:
         - "traefik.enable=true"
@@ -21,7 +21,7 @@ services:
         - "traefik.port=5432"
         # change the host here
         - "traefik.tcp.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
-        - "traefik.tcp.services.postgres.loadbalancer.server.port=5433"
+        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
         - "traefik.tcp.routers.postgres.entrypoint=postgres"
         - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
         - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
