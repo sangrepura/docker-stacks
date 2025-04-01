@@ -21,7 +21,7 @@ services:
         - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
         - traefik.tcp.routers.postgres.entrypoints=postgres
         - traefik.tcp.routers.postgres.tls.certresolver=leresolver
-        - traefik.tcp.services.postgres.loadbalancer.server.port=5432
+        - traefik.tcp.services.postgres.loadbalancer.server.port=5433
 
   pgadmin:
     image: dpage/pgadmin4
