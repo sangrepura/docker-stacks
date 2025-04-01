@@ -21,7 +21,6 @@ services:
         - "traefik.port=5432"
         # change the host here
         - "traefik.tcp.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
-        - "traefik.tcp.routers.postgres.entrypoint=postgres"
         - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
         - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
         - ""
