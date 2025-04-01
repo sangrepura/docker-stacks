@@ -42,8 +42,7 @@ services:
     volumes:
       - /mnt/pgadmin:/var/lib/pgadmin
     networks:
-      - traefik-public
-      - app-internal
+     - traefik-public
     deploy:
       labels:
         # change the host here
