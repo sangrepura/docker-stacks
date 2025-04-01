@@ -13,13 +13,13 @@ services:
       - app-internal
       - traefik-public
     ports:
-      - "5432:5432"
+      - "5433:5432"
     deploy:
       labels:
         - "traefik.enable=true"
         - traefik.tcp.routers.postgres.entrypoints=postgres
         - traefik.tcp.routers.postgres.tls.certresolver=leresolver
-        - traefik.tcp.services.postgres.loadbalancer.server.port=5432
+        - traefik.tcp.services.postgres.loadbalancer.server.port=5433
 
   pgadmin:
     image: dpage/pgadmin4
