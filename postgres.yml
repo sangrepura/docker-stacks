@@ -16,9 +16,8 @@ services:
       - "5432:5432"
     deploy:
       labels:
-        # change the host here
+        - "traefik.enable=true"
         - traefik.tcp.routers.pgadmin.rule=Host(`postgres.coastalsites.dev`)
-        - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
         - traefik.tcp.routers.postgres.entrypoints=postgres
         - traefik.tcp.routers.postgres.tls.certresolver=leresolver
         - traefik.tcp.services.postgres.loadbalancer.server.port=5432
