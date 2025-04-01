@@ -22,9 +22,10 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "5432:5433"
+      - "5433:5432"
     networks:
       - traefik-public
+      - app-internal
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       # Make sure the volume folder is created

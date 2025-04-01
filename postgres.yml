@@ -17,15 +17,11 @@ services:
     deploy:
       labels:
         # change the host here
-        - traefik.http.routers.postgres.rule=Host(`postgres.coastalsites.dev`)
-        - traefik.http.routers.postgres.rule=HostSNI(`*`)
-        - traefik.http.routers.postgres.entrypoint=postgres
-        - traefik.http.routers.postgres.tls.certresolver=leresolver
         - traefik.tcp.routers.pgadmin.rule=Host(`postgres.coastalsites.dev`)
         - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
         - traefik.tcp.routers.postgres.entrypoints=postgres
         - traefik.tcp.routers.postgres.tls.certresolver=leresolver
-        - traefik.tcp.services.postgres.loadbalancer.server.port=5433
+        - traefik.tcp.services.postgres.loadbalancer.server.port=5432
 
   pgadmin:
     image: dpage/pgadmin4
