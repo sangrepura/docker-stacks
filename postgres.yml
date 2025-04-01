@@ -20,11 +20,14 @@ services:
         - "traefik.backend=postgres"
         - "traefik.port=5432"
         # change the host here
-        - "traefik.http.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
-        - "traefik.http.services.postgres.loadbalancer.server.port=5432"
-        - "traefik.http.routers.postgres.entrypoint=tcp"
-        - "traefik.http.routers.postgres.rule=HostSNI(`*`)"
-        - "traefik.http.routers.postgres.tls.certresolver=leresolver"
+        - "traefik.tcp.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
+        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
+        - "traefik.tcp.routers.postgres.entrypoint=tcp"
+        - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+        - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
+        - "traefik.tcp.routers.postgres.tls=true"
+        - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
+        - "traefik.tcp.routers.postgres.tls.domains[0].main=postgres.coastalsites.dev"
 
   pgadmin:
     image: dpage/pgadmin4
