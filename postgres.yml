@@ -13,7 +13,7 @@ services:
       - app-internal
       - traefik-public
     ports:
-      - "5432:5432"
+      - "5433:5432"
     deploy:
       labels:
         - "traefik.enable=true"
