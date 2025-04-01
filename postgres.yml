@@ -39,6 +39,8 @@ services:
       PROXY_X_PREFIX_COUNT: 2
     volumes:
       - /mnt/pgadmin:/var/lib/pgadmin
+    ports:
+      - "5433:5433"
     networks:
       - traefik-public
       - app-internal
