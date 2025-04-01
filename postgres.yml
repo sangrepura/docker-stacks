@@ -13,7 +13,7 @@ services:
       - app-internal
       - traefik-public
     ports:
-      - "5433:5432"
+      - "5432:5432"
     deploy:
       labels:
         # change the host here
@@ -21,7 +21,7 @@ services:
         - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
         - traefik.tcp.routers.postgres.entrypoints=postgres
         - traefik.tcp.routers.postgres.tls.certresolver=leresolver
-        - traefik.tcp.services.postgres.loadbalancer.server.port=5433
+        - traefik.tcp.services.postgres.loadbalancer.server.port=5432
 
   pgadmin:
     image: dpage/pgadmin4
