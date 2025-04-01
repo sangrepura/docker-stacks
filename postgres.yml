@@ -57,6 +57,11 @@ services:
         # Change the auth password here
         - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$ZaVPNLwkafIJnxKRLScQcOpgyxyaD14Xn95j/rPS.Hs/AUru3WalO"
         - "traefik.http.routers.pgadmin.middlewares=auth"
+        - "traefik.enable=true"
+        - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+        - "traefik.tcp.routers.postgres.entrypoints=postgres"
+        - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
+        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
 
 networks:
   traefik-public:
