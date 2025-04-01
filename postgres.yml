@@ -16,11 +16,11 @@ services:
       - "5433:5432"
     deploy:
       labels:
-        - traefik.enable=true"
-        - traefik.backend=tcp"
-        - traefik.port=5432"
+        - traefik.enable=true
+        - traefik.backend=tcp
+        - traefik.port=5432
         # change the host here
-        - traefik.http.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
+        - traefik.http.routers.postgres.rule=Host(`postgres.coastalsites.dev`)
         - traefik.http.services.postgres.loadbalancer.server.port=5432
         - traefik.http.routers.postgres.entrypoint=postgres
         - traefik.http.routers.postgres.rule=HostSNI(`*`)
