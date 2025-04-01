@@ -8,7 +8,6 @@ services:
       POSTGRES_PASSWORD: PogJW_a9xXA73__T
     volumes:
       - /mnt/data/postgres:/var/lib/postgresql/data
-    command: -c ssl=on -c ssl_cert_file=/var/lib/postgresql/data/ssl/certificate.pem -c ssl_key_file=/var/lib/postgresql/data/ssl/privatekey.pem
     networks:
       - app-internal
       - traefik-public
@@ -37,9 +36,12 @@ services:
       PROXY_X_PORT_COUNT: 2
       # Number of values to trust for X-Forwarded-Prefix.
       PROXY_X_PREFIX_COUNT: 2
+    command: 
+      - -c 
+      - ssl=off  
     volumes:
       - /mnt/pgadmin:/var/lib/pgadmin
-    networks: 
+    networks:
      - traefik-public
      - app-internal
     deploy:
@@ -48,7 +50,7 @@ services:
         - "traefik.tcp.routers.postgres.rule=HostSNI(`postgres.coastalsites.dev`)"  # Add HostSNI rule
         - "traefik.tcp.routers.postgres.entrypoints=postgres"
         - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
-        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"  # Correct port to 5432
+        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
 networks:
   traefik-public:
     external: true
