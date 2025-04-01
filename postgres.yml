@@ -17,7 +17,7 @@ services:
     deploy:
       labels:
         - traefik.enable=true"
-        - traefik.backend=postgres"
+        - traefik.backend=tcp"
         - traefik.port=5432"
         # change the host here
         - traefik.http.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
