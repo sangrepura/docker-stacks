@@ -8,23 +8,18 @@ services:
       POSTGRES_PASSWORD: PogJW_a9xXA73__T
     volumes:
       - /mnt/data/postgres:/var/lib/postgresql/data
-    command: -c ssl=on -c ssl_cert_file=/var/lib/postgresql/data/ssl/certificate.pem -c ssl_key_file=/var/lib/postgresql/data/ssl/privatekey.pem
     networks:
       - app-internal
       - traefik-public
-    ports:
-      - "5433:5432"
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.backend=postgres"
-        - "traefik.port=5433"
-        # change the host here
-        - "traefik.http.routers.postgres.rule=Host(`postgres.coastalsites.dev`)"
-        - "traefik.http.services.postgres.loadbalancer.server.port=5433"
-        - "traefik.http.routers.postgres.entrypoint=tcp"
-        - "traefik.http.routers.postgres.rule=HostSNI(`*`)"
-        - "traefik.http.routers.postgres.tls.certresolver=leresolver"
+        - "traefik.tcp.routers.postgres.tls=true"
+        - "traefik.tcp.routers.postgres.entrypoints=postgres"
+        - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
+        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
+        - "traefik.tcp.routers.postgres.service=postgres"
+        - "traefik.tcp.routers.postgres.rule=HostSNI(`postgres.coastalsites.dev`)" 
 
   pgadmin:
     image: dpage/pgadmin4
@@ -42,11 +37,14 @@ services:
       PROXY_X_PORT_COUNT: 2
       # Number of values to trust for X-Forwarded-Prefix.
       PROXY_X_PREFIX_COUNT: 2
+    command: 
+      - -c 
+      - ssl=off  
     volumes:
       - /mnt/pgadmin:/var/lib/pgadmin
     networks:
-      - traefik-public
-      - app-internal
+     - traefik-public
+     - app-internal
     deploy:
       labels:
         - "traefik.enable=true"

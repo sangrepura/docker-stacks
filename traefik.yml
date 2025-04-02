@@ -2,12 +2,12 @@ version: "3.3"
 
 services:
   traefik:
-    image: "traefik:3.0"
+    image: "traefik:latest"
     command:
       - --log.level=INFO
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - --entrypoints.postgres.address=:5432
+      - --entrypoints.postgres.address=:5433
       - --providers.swarm.exposedbydefault=false
       - --providers.swarm.endpoint=unix:///var/run/docker.sock
       - --providers.swarm.network=traefik-public
@@ -22,13 +22,13 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "5432:5432"
+      - "5432:5433"
     networks:
       - traefik-public
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       # Make sure the volume folder is created
-      - "/mnt/data/traefik/acme.json:/le/acme.json"
+      - "/mnt/data/traefik:/le"
     deploy:
       labels:
         # Dashboard
