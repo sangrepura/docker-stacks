@@ -46,10 +46,19 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.tcp.routers.postgres.rule=HostSNI(`pgadmin.coastalsites.dev`)"
-        - "traefik.tcp.routers.postgres.entrypoints=postgres"
-        - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
-        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
+        - "traefik.backend=pgadmin"
+        - "traefik.port=80"
+        - "traefik.default.protocol=http"
+        # change the host here
+        - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.coastalsites.dev`)"
+        - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+        - "traefik.http.routers.pgadmin.entrypoints=websecure"
+        - "traefik.http.routers.pgadmin.tls=true"
+        - "traefik.http.routers.pgadmin.tls.certresolver=leresolver"
+        # Change the auth password here
+        - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$ZaVPNLwkafIJnxKRLScQcOpgyxyaD14Xn95j/rPS.Hs/AUru3WalO"
+        - "traefik.http.routers.pgadmin.middlewares=auth"
+
 networks:
   traefik-public:
     external: true
