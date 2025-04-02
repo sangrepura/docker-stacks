@@ -18,6 +18,7 @@ services:
         - "traefik.tcp.routers.postgres.tls.certresolver=leresolver"
         - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
         - "traefik.tcp.routers.postgres.service=postgres"
+        - "traefik.tcp.routers.postgres.rule=HostSNI(`postgres.coastalsites.dev`)" 
 
   pgadmin:
     image: dpage/pgadmin4
