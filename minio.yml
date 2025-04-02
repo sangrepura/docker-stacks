@@ -172,3 +172,4 @@ networks:
   traefik-public:
     external: true
   minio-internal:
+    external: false
